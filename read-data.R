@@ -19,8 +19,7 @@ library(haven)
 # 98 Nevím
 # 99 odmítl/a odpovědět
 text.name <- "Trust in the Constitutional Court"
-node.name <- paste(text.name, " for text with at least ", TEXT.LENGTH.THRESHOLD, 
-                   " characters:\n  Strong trust (1), Rather trust (2), Rather distrust (3), Strong distrust (4)", sep="")
+node.name <- paste(text.name, "\n  Strong trust (1), Rather trust (2), Rather distrust (3), Strong distrust (4)", sep="")
 states <- c("Strong trust", "Rather trust", "Rather distrust", "Strong distrust")
 fnames <- c("../CzechAttitudeBarometer/Vlna 1 (červen a červenec 2024)/PNS 2406 CoRe CAB W1_FINAL.sav", 
             "../CzechAttitudeBarometer/Vlna 2 (září 2024)/PNS 2409 CoRe CAB W2_FINAL.sav", 
@@ -129,3 +128,49 @@ ggplot(df_long, aes(x = date, y = percentage, fill = category)) +
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+###################################################################################
+# An alternative where "I don't know" is included at the center of the scale
+# Define states and colors
+states <- c("Strong trust", "Rather trust", "I do not know", "Rather distrust", "Strong distrust")
+# states <- 0:10
+col <- colorRampPalette(c("blue", "cyan", "yellow", "orange", "red"))(length(states))
+
+# Extract non-missing tables and reorder categories
+df_long <- lapply(seq_along(tables), function(i) {
+  if (!is.na(tables[[i]][1])) {
+    # Reorder: 1, 2, 98, 3, 4
+    tab <- tables[[i]][c("1", "2", "98", "3", "4")]
+    # Calculate percentages
+    percentages <- (tab / sum(tab)) * 100
+    data.frame(
+      date = as.Date(dates[[i]]),
+      category = factor(states, levels = states),  # Use custom labels
+      percentage = as.numeric(percentages)
+    )
+  } else {
+    NULL
+  }
+}) %>% 
+  bind_rows()
+
+# Create the plot
+ggplot(df_long, aes(x = date, y = percentage, fill = category)) +
+  geom_col(width = 20) +  # width in days
+  geom_text(aes(label = round(percentage),
+                color = category), 
+            position = position_stack(vjust = 0.5),
+            size = 3) +  # Add percentage labels
+  scale_fill_manual(values = col) +  # Custom color scheme with gray for "I do not know"
+  scale_color_manual(values = c("white", "black", "black", "black", "black"), guide = "none") +  # Text colors
+  scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") +
+  labs(
+    title = "Trend Over Time",
+    x = "Date",
+    y = "Percentage (%)",
+    fill = "Category"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
