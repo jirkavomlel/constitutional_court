@@ -94,7 +94,7 @@ col <- colorRampPalette(c("blue", "cyan", "yellow", "orange", "red"))(length(sta
 df_long <- lapply(seq_along(tables), function(i) {
   if (!is.na(tables[[i]][1])) {
     # Remove the 98 category
-    tab <- tables[[i]][names(tables[[i]]) != "98"]
+    tab <- tables[[i]][names(tables[[i]]) != "98" & names(tables[[i]]) != "99"] 
     # Calculate percentages
     percentages <- (tab / sum(tab)) * 100
     data.frame(
