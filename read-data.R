@@ -25,7 +25,7 @@ fnames <- c("../CzechAttitudeBarometer/Vlna 1 (červen a červenec 2024)/PNS 240
             "../CzechAttitudeBarometer/Vlna 2 (září 2024)/PNS 2409 CoRe CAB W2_FINAL.sav", 
             "../CzechAttitudeBarometer/Vlna 3 (listopad 2024)/PNS 2411 CoRe CAB W3_FINAL.sav", 
             "../CzechAttitudeBarometer/Vlna 4 (prosinec 2024)/PNS 2412 CoRe CAB W4_FINAL.sav", 
-            "../CzechAttitudeBarometer/Vlna 5 (duben 2025)/PNS 2504 CoRe W5_FINAL.sav",
+            "../CzechAttitudeBarometer/Vlna 5 (duben 2025)/PNS 2504 CoRe CAB W5_FINAL.sav",
             "../CzechAttitudeBarometer/Vlna 6 (červenec 2025)/PNS 2507 CoRe CAB W6_FINAL.sav", 
             "../CzechAttitudeBarometer/Vlna 7 (září 2025)/PNS 2509 CoRe CAB W7_FINAL.sav", 
             "../CzechAttitudeBarometer/Vlna 8 (říjen 2025)/PNS 2510 CoRe CAB W8_FINAL.sav")
@@ -74,21 +74,17 @@ for (i in 1:8){
   }
 }
 
-# Visualization using 
-
+# Visualization
 library(ggplot2)
 library(tidyr)
 library(dplyr)
-
 # Set locale to English for dates
 Sys.setlocale("LC_TIME", "C")
-
 
 # Define states and colors
 states <- c("Strong trust", "Rather trust", "Rather distrust", "Strong distrust")
 # states <- 0:10
 col <- colorRampPalette(c("blue", "cyan", "yellow", "orange", "red"))(length(states))
-
 # Extract non-missing tables and remove value 98
 df_long <- lapply(seq_along(tables), function(i) {
   if (!is.na(tables[[i]][1])) {
